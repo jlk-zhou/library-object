@@ -51,4 +51,42 @@ function displayLibrary(library) {
     }
 }
 
-displayLibrary(myLibrary); 
+const addBookBtn = document.querySelector(".add"); 
+const addBookForm = document.querySelector("dialog");
+const closeButton = document.querySelector(".close"); 
+const confirmBookBtn = document.querySelector("#confirmBtn"); 
+
+const titleInput = document.querySelector("#title"); 
+const authorInput = document.querySelector("#author"); 
+const pagesInput = document.querySelector("#pages"); 
+const readInput = document.querySelector("#read"); 
+// const notReadInput = document.querySelector("#not-read"); 
+
+function resetInputs() {
+    titleInput.value = ""; 
+    authorInput.value = ""; 
+    pagesInput.value = ""; 
+    readInput.checked = false; 
+}
+
+addBookBtn.addEventListener("click", () => {
+    addBookForm.showModal(); 
+})
+
+closeButton.addEventListener("click", () => {
+    resetInputs(); 
+    addBookForm.close(); 
+})
+
+confirmBookBtn.addEventListener("click", (event) => {
+    event.preventDefault(); 
+    let readState = readInput.checked ? true : false; 
+
+    addBookToLibrary(titleInput.value, authorInput.value, pagesInput.value, readState); 
+    displayLibrary(myLibrary); 
+    console.log(`${titleInput.value}, by ${authorInput.value}, ${pagesInput.value} pages, ${readState}`); 
+
+    resetInputs(); 
+
+    addBookForm.close(); 
+})
