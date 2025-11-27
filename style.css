@@ -1,0 +1,18 @@
+.library {
+    display: grid; 
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-auto-rows: 400px;
+    gap: 30px; 
+}
+
+h1.page-header {
+    text-align: center;
+}
+
+.book {
+    border: 1px solid black;
+}
+
+.add {
+    border: 1px dashed black; 
+}
