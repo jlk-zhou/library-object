@@ -4,6 +4,7 @@ function Book(title, author, pages, read) {
     if (!new.target) {
         throw Error("Did you forget the 'new' operator? ")
     }
+    this.uuid = crypto.randomUUID();
     this.title = title; 
     this.author = author; 
     this.pages = pages; 
@@ -22,6 +23,15 @@ function removeDivsByClass(className) {
     }); 
 }
 
+function removeBookFromLibrary(bookUUID) {
+    for (let i = 0; i < myLibrary.length; i++) {
+        if (myLibrary[i].uuid === bookUUID) {
+            myLibrary.splice(i, 1); 
+            displayLibrary(myLibrary); 
+        }
+    };
+}
+
 function displayLibrary(library) {
     const libraryDiv = document.querySelector(".library"); 
     removeDivsByClass("book"); 
@@ -30,6 +40,7 @@ function displayLibrary(library) {
         // Create the card for the book
         const newBookCard = document.createElement("div")
         newBookCard.setAttribute("class", "book"); 
+        newBookCard.setAttribute("data-uuid", book.uuid); 
 
         // Alter book fields to be displayed
         let bookCardFields = {
@@ -46,6 +57,16 @@ function displayLibrary(library) {
             newBookCard.appendChild(fieldDisplay); 
         }
 
+        // Add remove button to book card 
+        const removeBtn = document.createElement("button"); 
+        removeBtn.setAttribute("class", "remove-btn"); 
+        removeBtn.textContent = "Remove"; 
+        newBookCard.appendChild(removeBtn); 
+
+        removeBtn.addEventListener("click", () => removeBookFromLibrary(
+            newBookCard.getAttribute("data-uuid")
+        )); 
+
         // Prepend the new book card
         libraryDiv.prepend(newBookCard); 
     }
@@ -60,7 +81,6 @@ const titleInput = document.querySelector("#title");
 const authorInput = document.querySelector("#author"); 
 const pagesInput = document.querySelector("#pages"); 
 const readInput = document.querySelector("#read"); 
-// const notReadInput = document.querySelector("#not-read"); 
 
 function resetInputs() {
     titleInput.value = ""; 
@@ -84,9 +104,10 @@ confirmBookBtn.addEventListener("click", (event) => {
 
     addBookToLibrary(titleInput.value, authorInput.value, pagesInput.value, readState); 
     displayLibrary(myLibrary); 
-    console.log(`${titleInput.value}, by ${authorInput.value}, ${pagesInput.value} pages, ${readState}`); 
 
     resetInputs(); 
 
     addBookForm.close(); 
 })
+
+
