@@ -11,6 +11,10 @@ function Book(title, author, pages, read) {
     this.read = read; 
 }
 
+Book.prototype.toggleReadStatus = function() {
+    this.read = !this.read; 
+}
+
 function addBookToLibrary(title, author, pages, read) {
     const book = new Book(title, author, pages, read); 
     myLibrary.push(book); 
@@ -32,6 +36,15 @@ function removeBookFromLibrary(bookUUID) {
     };
 }
 
+function toggleRead(bookUUID) {
+    for (let i = 0; i < myLibrary.length; i++) {
+        if (myLibrary[i].uuid === bookUUID) {
+            myLibrary[i].toggleReadStatus(); 
+            displayLibrary(myLibrary); 
+        }
+    }
+}
+
 function displayLibrary(library) {
     const libraryDiv = document.querySelector(".library"); 
     removeDivsByClass("book"); 
@@ -45,15 +58,17 @@ function displayLibrary(library) {
         // Alter book fields to be displayed
         let bookCardFields = {
             "title": book.title, 
-            "by": `by ${book.author}`, 
+            "author": `by ${book.author}`, 
             "pages": `${book.pages} pages`, 
             "read": book.read ? "Read" : "Not Read"
         }; 
 
         // Populate the new book card
-        for (field of Object.values(bookCardFields)) {
+        for (const field of Object.entries(bookCardFields)) {
+            // console.log(field[0]); 
             const fieldDisplay = document.createElement("p"); 
-            fieldDisplay.textContent = field; 
+            fieldDisplay.textContent = field[1]; 
+            fieldDisplay.setAttribute("class", field[0])
             newBookCard.appendChild(fieldDisplay); 
         }
 
@@ -63,9 +78,28 @@ function displayLibrary(library) {
         removeBtn.textContent = "Remove"; 
         newBookCard.appendChild(removeBtn); 
 
+        // Make remove button functional
         removeBtn.addEventListener("click", () => removeBookFromLibrary(
             newBookCard.getAttribute("data-uuid")
         )); 
+
+        // Add toggle read status button to book card
+        const toggleReadBtn = document.createElement("button"); 
+        toggleReadBtn.setAttribute("class", "toggle-read"); 
+        toggleReadBtn.textContent = book.read ? "Mark as Unread": "Mark as Read"; 
+        newBookCard.appendChild(toggleReadBtn); 
+
+        // Make toggle read button functional
+        toggleReadBtn.addEventListener("click", () => {
+            toggleRead(
+                newBookCard.getAttribute("data-uuid")
+            ); 
+            if (toggleReadBtn.textContent === "Mark as Read") {
+                toggleReadBtn.textContent = "Mark as Unread"; 
+            } else {
+                toggleReadBtn.textContent = "Mark as Read"; 
+            }
+        })
 
         // Prepend the new book card
         libraryDiv.prepend(newBookCard); 
@@ -109,5 +143,3 @@ confirmBookBtn.addEventListener("click", (event) => {
 
     addBookForm.close(); 
 })
-
-
